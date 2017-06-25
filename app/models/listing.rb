@@ -5,6 +5,8 @@ class Listing < ActiveRecord::Base
   has_many :reviews, :through => :reservations
   has_many :guests, :class_name => "User", :through => :reservations
 
+  before_create :change_host_status
+  before_destroy :host_false_without_listings
   validate :address_isnt_blank, :listing_type_isnt_blank, :title_isnt_blank,
             :description_isnt_blank, :price_isnt_blank, :neighborhood_isnt_blank
 
@@ -51,6 +53,17 @@ class Listing < ActiveRecord::Base
     end
   end
 
+  def change_host_status
+    self.host.host = true
+    self.host.save
+  end
 
+  # This one should work. Not sure what's wrong. 
+  def host_false_without_listings
+    if self.host.listings == [self]
+      self.host.host = false
+      self.host.save
+    end
+  end
 
 end

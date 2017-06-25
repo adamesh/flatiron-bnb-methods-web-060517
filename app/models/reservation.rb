@@ -3,8 +3,9 @@ class Reservation < ActiveRecord::Base
   belongs_to :guest, :class_name => "User"
   has_one :review
 
-  validate :checkin_isnt_blank, :checkout_isnt_blank, :res_own_listing,
-          :checkin_before_checkout, :res_available?
+
+  validate :checkin_isnt_blank, :checkout_isnt_blank, :res_own_listing, :checkin_before_checkout
+
 
   def duration
     #Assignment: knows about its duration based on checkin and checkout dates
@@ -40,24 +41,12 @@ class Reservation < ActiveRecord::Base
     end
   end
 
-  def res_available?
-# validates that a listing is available at checkin before making reservation
-# validates that a listing is available at checkout before making reservation
-# validates that a listing is available at for both checkin and checkout before making reservation
-    if self.checkout == nil || self.checkin == nil
-      nil
-    elsif !self.listing.reservations.all? do |reservation|
-      reservation.checkin > self.checkout ||
-      reservation.checkout < self.checkin
-        errors.add(:checkin, "checkin or checkout timing invalid")
-      end
-    end
-  end
-
   def checkin_before_checkout
 # validates that checkin is before checkout
 # validates that checkin and checkout dates are not the same
-    if self.checkin.nil? || self.checkout.nil? || self.checkin >= self.checkout
+    if self.checkout == nil || self.checkin == nil
+      nil
+    elsif self.checkin >= self.checkout
       errors.add(:checkin, "checkin must be after checkout")
     end
   end
