@@ -20,7 +20,7 @@ class City < ActiveRecord::Base
     # now we have a hash of reservation and listing per city object.
     # next, we just pull the highest_ratio of reservation to listings
     city_ratios.max_by do |city, values|
-      values["reservations"] / values["listings"]
+      values["reservations"] / (values["listings"].nonzero? || 1) #prevents a ZeroDivisionError
     end.first
   end
 
