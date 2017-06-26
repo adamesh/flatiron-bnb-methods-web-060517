@@ -58,9 +58,8 @@ class Listing < ActiveRecord::Base
     self.host.save
   end
 
-  # This one should work. Not sure what's wrong. 
   def host_false_without_listings
-    if self.host.listings == [self]
+    if self.host.listings.length == 1
       self.host.host = false
       self.host.save
     end
