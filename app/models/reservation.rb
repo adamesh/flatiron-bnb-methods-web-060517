@@ -51,28 +51,41 @@ class Reservation < ActiveRecord::Base
     end
   end
 
-  def check_available?
-# validates that a listing is available at checkin before making reservation
-    all_dates = []
+  def collect_listing_res_dates
     if self.listing.reservations == []
       nil
     elsif self.checkin == nil || self.checkout == nil
       nil
     else
-      all_dates = self.listing.reservations.inject([]) do |array, res|
+      return self.listing.reservations.inject([]) do |array, res|
         array << {checkin: res.checkin, checkout: res.checkout}
       end
+    end
+  end
+
+  def check_available?
+# validates that a listing is available at checkin before making reservation
+    all_dates = collect_listing_res_dates
+    if all_dates.nil?
+      nil
+    elsif all_dates.any? do |res|
+      self.checkin > res[:checkin] && self.checkin < res[:checkout]
+      end
+      errors.add(:checkin, "unavailable")
+    elsif all_dates.any? do |res|
+      self.checkout > res[:checkin] && self.checkin < res[:checkout]
+      end
+      errors.add(:checkout, "unavailable")
+    end
+  end
       # At this point, my all_dates works.
 
 #CODE BELOW BREAKS A LOT OF TESTS, BUT CORRECTLY VALIDATES. MUST BE REWORKED
-      # if all_dates.any? do |res|
-      #     self.checkout > res[:checkin] &&
-      #     self.checkin < res[:checkout]
+      # if all_dates.all? do |res|
+      #     self.checkout < res[:checkin] ||
+      #     self.checkin > res[:checkout]
       #     errors.add(:checkin, "unavailable")
       #   end
       # end
-
-    end
-  end
 
 end
