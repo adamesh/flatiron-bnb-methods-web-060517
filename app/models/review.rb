@@ -19,7 +19,6 @@ class Review < ActiveRecord::Base
   def reservation_valid?
     # Assignment: review validations is invalid without an
     # associated reservation, has been accepted, and checkout has happened
-    # the review they feed us seems valid, I'm confused.
     if self.reservation_id == nil
       errors.add(:reservation, "is invalid")
     elsif self.reservation.status == "pending"
