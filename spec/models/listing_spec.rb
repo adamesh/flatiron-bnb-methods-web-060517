@@ -210,11 +210,9 @@ describe Listing do
           host: user) }
 
       it 'changes host status to false' do
-        binding.pry
         expect(user.host).to eq(true)
         first_listing.destroy
         second_listing.destroy
-
         expect(user.reload.host?).to eq(false)
       end
     end
