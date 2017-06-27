@@ -64,7 +64,7 @@ class Reservation < ActiveRecord::Base
   end
 
   def check_available?
-# validates that a listing is available at checkin before making reservation
+  # validates that a listing is available at checkin before making reservation
     all_dates = collect_listing_res_dates
     if all_dates.nil?
       nil
@@ -78,14 +78,5 @@ class Reservation < ActiveRecord::Base
       errors.add(:checkout, "unavailable")
     end
   end
-      # At this point, my all_dates works.
-
-#CODE BELOW BREAKS A LOT OF TESTS, BUT CORRECTLY VALIDATES. MUST BE REWORKED
-      # if all_dates.all? do |res|
-      #     self.checkout < res[:checkin] ||
-      #     self.checkin > res[:checkout]
-      #     errors.add(:checkin, "unavailable")
-      #   end
-      # end
 
 end
